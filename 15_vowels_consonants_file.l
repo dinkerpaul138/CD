@@ -1,22 +1,29 @@
 
 %{
 #include <stdio.h>
+int vowels = 0;
+int consonants = 0;
 %}
 %option noyywrap
 %%
 [aeiouAEIOU] {
-    printf("%s : Vowel\n", yytext);
+    vowels++;
 }
 [a-zA-Z] {
-    printf("%s : Consonant\n", yytext);
+    consonants++;
 }
-[ \t\n]+ ;
-. {
-    printf("%s : Not an alphabet\n", yytext);
-}
+.|\n ;
 %%
 int main() {
-    printf("Enter characters:\n");
+    FILE *fp = fopen("input.txt", "r");
+    if (fp == NULL) {
+        printf("File not found\n");
+        return 1;
+    }
+    yyin = fp;
     yylex();
+    printf("Vowels = %d\n", vowels);
+    printf("Consonants = %d\n", consonants);
+    fclose(fp);
     return 0;
 }
