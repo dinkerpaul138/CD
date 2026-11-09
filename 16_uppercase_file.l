@@ -1,17 +1,24 @@
+
 %{
 #include <stdio.h>
 int count = 0;
 %}
+%option noyywrap
 %%
-[A-Z] { count++; }
-.|\n  ;
-%%
-int main(int argc, char **argv) {
-    if (argc != 2 || !(yyin = fopen(argv[1], "r"))) {
-        fprintf(stderr, "Usage: %s file.txt\n", argv[0]); return 1;
-    }
-    yylex();
-    printf("Uppercase letters = %d\n", count);
-    fclose(yyin); return 0;
+[A-Z] {
+    count++;
 }
-int yywrap(void) { return 1; }
+.|\n ;
+%%
+int main() {
+    FILE *fp = fopen("input.txt", "r");
+    if (fp == NULL) {
+        printf("File not found\n");
+        return 1;
+    }
+    yyin = fp;
+    yylex();
+    printf("Number of uppercase letters = %d\n", count);
+    fclose(fp);
+    return 0;
+}
