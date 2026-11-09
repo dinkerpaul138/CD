@@ -1,46 +1,68 @@
-
-#include <stdio.h>
-#include <string.h>
-
-void add(char first[], char symbol) {
-    if (strchr(first, symbol) == NULL) {
-        int n = strlen(first);
-        first[n] = symbol;
-        first[n + 1] = '\0';
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+char p[20][50];
+int n;
+char result[50];
+int count=0;
+void add(char c)
+{
+    int i;
+    for(i=0;i<count;i++)
+        if(result[i]==c) return;
+    result[count++]=c;
+}
+void FIRST(char c, int visited[])
+{
+    int i,j,k;
+    char *rhs;
+    if(!isupper(c))
+    {
+        add(c);
+        return;
     }
+    if(visited[c-'A']) return;
+    visited[c-'A']=1;
+    for(i=0;i<n;i++)
+    {
+        if(p[i][0]==c)
+        {
+            rhs=p[i]+2;
+            for(j=0;rhs[j]!='\0';)
+            {
+                if(rhs[j]=='|')
+                {
+                    j++;
+                    continue;
+                }
+                if(isupper(rhs[j]))
+                    FIRST(rhs[j],visited);
+                else
+                    add(rhs[j]);
+                while(rhs[j]!='|' && rhs[j]!='\0')
+                    j++;
+            }
+        }
+    }
+
+    visited[c-'A']=0;
 }
 
-int main() {
-    char FIRST_E[10] = "";
-    char FIRST_T[10] = "";
-    char FIRST_F[10] = "";
-
-    /* F -> (E) | id */
-    add(FIRST_F, '(');
-    add(FIRST_F, 'i');  /* i represents id */
-
-    /* T -> T*F | F */
-    for (int i = 0; FIRST_F[i] != '\0'; i++)
-        add(FIRST_T, FIRST_F[i]);
-
-    /* E -> E+T | T */
-    for (int i = 0; FIRST_T[i] != '\0'; i++)
-        add(FIRST_E, FIRST_T[i]);
-
-    printf("FIRST(E) = { ");
-    for (int i = 0; FIRST_E[i] != '\0'; i++)
-        printf("%s", FIRST_E[i] == 'i' ? "id" : "(");
-    printf(" }\n");
-
-    printf("FIRST(T) = { ");
-    for (int i = 0; FIRST_T[i] != '\0'; i++)
-        printf("%s", FIRST_T[i] == 'i' ? "id" : "(");
-    printf(" }\n");
-
-    printf("FIRST(F) = { ");
-    for (int i = 0; FIRST_F[i] != '\0'; i++)
-        printf("%s", FIRST_F[i] == 'i' ? "id" : "(");
-    printf(" }\n");
-
+int main()
+{
+    char c;
+    int visited[26]={0},i;
+    printf("Enter number of productions: ");
+    scanf("%d",&n);
+    printf("Enter productions (Example E=E+T|T):\n");
+    for(i=0;i<n;i++)
+        scanf("%s",p[i]);
+    printf("Enter non-terminal: ");
+    scanf(" %c",&c);
+    FIRST(c,visited);
+    printf("FIRST(%c) = { ",c);
+    for(i=0;i<count;i++)
+        printf("%c ",result[i]);
+    printf("}");
     return 0;
 }
