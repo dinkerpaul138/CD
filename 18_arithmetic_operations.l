@@ -1,14 +1,34 @@
+
 %{
 #include <stdio.h>
 %}
+%option noyywrap
 %%
-"+" { puts("Addition operator"); }
-"-" { puts("Subtraction operator"); }
-"*" { puts("Multiplication operator"); }
-"/" { puts("Division operator"); }
-[0-9]+ { printf("Number: %s\n", yytext); }
-[ \t\r\n]+ ;
-. { printf("Invalid symbol: %s\n", yytext); }
+"+" {
+    printf("Addition Operator\n");
+}
+"-" {
+    printf("Subtraction Operator\n");
+}
+"*" {
+    printf("Multiplication Operator\n");
+}
+"/" {
+    printf("Division Operator\n");
+}
+"%%" {
+    printf("Modulus Operator\n");
+}
+[0-9]+ {
+    printf("Number: %s\n", yytext);
+}
+[ \t\n]+ ;
+. {
+    printf("Invalid character: %s\n", yytext);
+}
 %%
-int main(void) { printf("Enter expression: "); yylex(); return 0; }
-int yywrap(void) { return 1; }
+int main() {
+    printf("Enter arithmetic expression:\n");
+    yylex();
+    return 0;
+}
